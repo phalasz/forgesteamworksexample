@@ -1,0 +1,67 @@
+# Windows
+Thumbs.db
+Thumbs.db.meta
+
+# Mac
+.DS_Store
+
+# Unity
+Library
+Temp
+AssetsLogs
+ProjectVersion.txt
+*.unitypackage
+ExportedObj/
+obj/
+*.svd
+*.userprefs
+/*.csproj
+*.pidb
+*.suo
+/*.sln
+*.user
+*.unityproj
+*.booproj
+
+# Xamarin
+obj
+bin
+*.userprefs
+*.user
+test-results
+
+# Visual Studio
+.vs
+
+# Visual Studio Code
+.vscode
+
+# Jetbrains
+.idea
+/.leu
+
+/Build
+/Assets/Raw Mocap Data
+/Assets/Raw Mocap Data.meta
+*.Cache
+Assets/Plugins/ConsoleE/
+Assets/Plugins/ConsoleE.meta
+*.stackdump
+Builds/
+
+Backup/
+
+Assets/Plugins/
+Assets/Plugins\.meta
+Logs/Packages-Update\.log
+Assets/Logs/
+Assets/Logs\.meta
+*.log
+
+user\.cfg
+Assets/Gizmos/NavMeshLink Icon.png
+Assets/Gizmos/NavMeshLink Icon.png.meta
+Assets/Gizmos/NavMeshModifierVolume Icon.png
+Assets/Gizmos/NavMeshModifierVolume Icon.png.meta
+Assets/Gizmos/NavMeshSurface Icon.png
+Assets/Gizmos/NavMeshSurface Icon.png.meta
