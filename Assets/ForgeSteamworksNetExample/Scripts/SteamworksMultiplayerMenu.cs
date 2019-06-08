@@ -19,14 +19,12 @@ namespace ForgeSteamworksNETExample
 		public bool DontChangeSceneOnConnect = false;
 		public bool connectUsingMatchmaking = false;
 		public bool useMainThreadManagerForRPCs = true;
-		public bool useInlineChat = false;
-
-		public int maximumNumberOfPlayers = 5;
 
 		public GameObject networkManager = null;
 		public GameObject[] ToggledButtons;
 
-		[Header("Game information for server browser")]
+		[Header("Server information")]
+		public int maximumNumberOfPlayers = 5;
 		public string gameId = "forgeGame";
 		public string type = "Deathmatch";
 		public string mode = "Teams";
@@ -74,13 +72,17 @@ namespace ForgeSteamworksNETExample
 
 		/// <summary>
 		/// Sets the lobby to be joined when clicking the connect button.
+		/// Usually called by the <see cref="JoinMenu"/> when a server list item is clicked
 		/// </summary>
 		/// <param name="steamId"></param>
 		public void SetSelectedLobby(CSteamID steamId)
 		{
-			this.selectedLobby = steamId;
+			selectedLobby = steamId;
 		}
 
+		/// <summary>
+		/// Handle the connecting the selected lobby/server
+		/// </summary>
 		public void Connect()
 		{
 			if (connectUsingMatchmaking)
@@ -90,6 +92,7 @@ namespace ForgeSteamworksNETExample
 				return;
 			}
 
+			// Need to select a lobby first.
 			if (selectedLobby == CSteamID.Nil)
 				return;
 
@@ -98,16 +101,26 @@ namespace ForgeSteamworksNETExample
 			client = new SteamP2PClient();
 			((SteamP2PClient)client).Connect(selectedLobby);
 
+			// Steamworks API calls are async so we need to delay the rest of the networker setup until
+			// the local user joins the selected lobby.
 			client.bindSuccessful += (networker) => {
 				MainThreadManager.Run(() =>
 				{
 					Connected(client);
 				});
 			};
+
+			// TODO: handle lobby join failures. bindFailure?
 		}
 
+		/// <summary>
+		/// Handle setting up a host. Called by the host button.
+		/// </summary>
 		public void Host()
 		{
+			// Currently there is a bug in the SteamP2PServer code where the lobby max member count is hard coded to be 5.
+			// Until a fix is in place please change line 186 of the SteamP2PServer to read
+			//    `m_CreateLobbyResult = SteamMatchmaking.CreateLobby(lobbyType, MaxConnections);`
 			server = new SteamP2PServer(maximumNumberOfPlayers);
 			((SteamP2PServer)server).Host(SteamUser.GetSteamID(), isPrivateLobby ? ELobbyType.k_ELobbyTypeFriendsOnly : ELobbyType.k_ELobbyTypePublic, OnLobbyReady);
 
@@ -151,9 +164,6 @@ namespace ForgeSteamworksNETExample
 
 			mgr.Initialize(networker);
 
-			if (useInlineChat && networker.IsServer)
-				SceneManager.sceneLoaded += CreateInlineChat;
-
 			if (networker is IServer)
 			{
 				if (!DontChangeSceneOnConnect)
@@ -161,18 +171,6 @@ namespace ForgeSteamworksNETExample
 				else
 					NetworkObject.Flush(networker); //Called because we are already in the correct scene!
 			}
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="scene"></param>
-		/// <param name="mode"></param>
-		private void CreateInlineChat(Scene scene, LoadSceneMode mode)
-		{
-			SceneManager.sceneLoaded -= CreateInlineChat;
-			var chat = NetworkManager.Instance.InstantiateChatManager();
-			DontDestroyOnLoad(chat.gameObject);
 		}
 
 		/// <summary>
@@ -190,6 +188,9 @@ namespace ForgeSteamworksNETExample
 			if (server != null) server.Disconnect(true);
 		}
 
+		/// <summary>
+		/// Setup the local user's steam avatar in the top left corner of the menu
+		/// </summary>
 		private void GetPlayerSteamInformation()
 		{
 			if (SteamManager.Initialized) {
@@ -209,13 +210,19 @@ namespace ForgeSteamworksNETExample
 		/// </summary>
 		private void OnLobbyReady()
 		{
+			// If the host has not set a server name then let's use his/her name instead to name the lobby
 			var personalName = SteamFriends.GetPersonaName();
-
 			var gameName = serverName.text == "" ? $"{personalName}'s game" : serverName.text;
 
 			var lobbyId = ((SteamP2PServer) server).LobbyID;
+
+			// Set the name of the lobby
 			SteamMatchmaking.SetLobbyData(lobbyId, "name", gameName);
+
+			// Set the unique id of our game so the server list only gets the games with this id
 			SteamMatchmaking.SetLobbyData(lobbyId, "fnr_gameId", gameId);
+
+			// Set all other game information
 			SteamMatchmaking.SetLobbyData(lobbyId, "fnr_gameType", type);
 			SteamMatchmaking.SetLobbyData(lobbyId, "fnr_gameMode", mode);
 			SteamMatchmaking.SetLobbyData(lobbyId, "fnr_gameDesc", comment);
