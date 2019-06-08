@@ -10,37 +10,80 @@ namespace ForgeSteamworksNETExample
 {
 	public class JoinMenu : MonoBehaviour
 	{
+		/// <summary>
+		/// The server list UI container element
+		/// </summary>
 		public ScrollRect servers;
+
+		/// <summary>
+		/// The template UI element representing an entry in the server list
+		/// </summary>
 		public ServerListEntry serverListEntryTemplate;
+
+		/// <summary>
+		/// The container (parent) for the server list items
+		/// </summary>
 		public RectTransform serverListContentRect;
+
+		/// <summary>
+		/// Reference to the connect button
+		/// </summary>
 		public Button connectButton;
+
+		/// <summary>
+		/// Reference to the connect button's label element
+		/// </summary>
 		public Text connectButtonLabel;
 
 		// TODO: could be exposed on UI to only list games played by steam friends
 		private bool onlyShowFriendsGames;
 
+		/// <summary>
+		/// Internal index to track which list item has been clicked on
+		/// </summary>
 		private int selectedServer = -1;
+
+		/// <summary>
+		/// The list of servers the client knows about
+		/// </summary>
 		private List<ServerListItemData> serverList = new List<ServerListItemData>();
+
+		/// <summary>
+		/// The height of one server list entry used for repositioning the list items
+		/// </summary>
 		private float serverListEntryTemplateHeight;
+
+		/// <summary>
+		/// Timer to track when the server list should be re-requested
+		/// </summary>
 		private float nextListUpdateTime = 0f;
+
+		/// <summary>
+		/// Reference to the multiplayer menu
+		/// </summary>
 		private SteamworksMultiplayerMenu mpMenu;
 
+		// Steamworks API callback methods
 		private Callback<LobbyMatchList_t> callbackLobbyListRequest;
 		private Callback<LobbyDataUpdate_t> callbackLobbyDataUpdate;
 
 		private void Awake()
 		{
-			// Init the MainThreadManager
+			// Init the MainThreadManager if it has not been already
 			MainThreadManager.Create();
 
+			// Store a reference to the Multiplayer menu
 			mpMenu = this.GetComponentInParent<SteamworksMultiplayerMenu>();
 			serverListEntryTemplateHeight = ((RectTransform) serverListEntryTemplate.transform).rect.height;
 
+			// Disable the connect button until the user has selected a server
 			connectButton.interactable = false;
 
+			// Make sure steam callbacks are set
 			callbackLobbyListRequest = Callback<LobbyMatchList_t>.Create(OnLobbyListRequested);
 			callbackLobbyDataUpdate = Callback<LobbyDataUpdate_t>.Create(OnLobbyDataUpdated);
 
+			// Request the initial lobby list
 			GetAvailableLobbyList();
 		}
 
@@ -51,6 +94,16 @@ namespace ForgeSteamworksNETExample
 				// Refresh lobbies from steam
 
 				nextListUpdateTime = Time.time + 5.0f + UnityEngine.Random.Range(0.0f, 1.0f);
+			}
+
+			foreach (var server in serverList)
+			{
+				if (Time.time > server.NextUpdate)
+				{
+					// Time to re-request the server information
+					SteamMatchmaking.RequestLobbyData(server.SteamId);
+					server.NextUpdate = Time.time + 5.0f + UnityEngine.Random.Range(0.0f, 1.0f); // TODO: Might worth extracting the 5.0f into a const or a field to be configured via the inspector
+				}
 			}
 		}
 
@@ -75,7 +128,7 @@ namespace ForgeSteamworksNETExample
 		/// <summary>
 		/// Add a server to the list of servers
 		/// </summary>
-		/// <param name="steamId"></param>
+		/// <param name="steamId">The <see cref="CSteamID"/> of the lobby/server to add to the list</param>
 		private void AddServer(CSteamID steamId)
 		{
 			for (int i = 0; i < serverList.Count; ++i)
@@ -88,42 +141,41 @@ namespace ForgeSteamworksNETExample
 				}
 			}
 
-			var dataCount = SteamMatchmaking.GetLobbyDataCount(steamId);
-			for (int i = 0; i < dataCount; i++)
-			{
-				string key;
-				string value;
-				if (SteamMatchmaking.GetLobbyDataByIndex(steamId, i, out key, 255, out value, 8192))
-				{
-					Debug.Log($"{steamId}: {key}={value}");
-				}
-			}
-
 			var serverListItemData = new ServerListItemData {
 				ListItem = GameObject.Instantiate<ServerListEntry>(serverListEntryTemplate, servers.content),
 				SteamId = steamId
 			};
+
+			// Make the list item visible
 			serverListItemData.ListItem.gameObject.SetActive(true);
 
-			UpdateItem(serverListItemData);
-			//serverListItemData.NextUpdate = Time.time + 5.0f + UnityEngine.Random.Range(0.0f, 1.0f);
+			// Make sure we periodically re-request the lobby/server data so the server information in the list is
+			// up-to-date
+			serverListItemData.NextUpdate = Time.time + 5.0f + UnityEngine.Random.Range(0.0f, 1.0f);
 
+			// Add the server to the list.
 			serverList.Add(serverListItemData);
+			// Make sure the the newly added server is not selected on the UI
 			SetListItemSelected(serverListItemData, false);
 
+			// Make sure every item in the UI is positioned well
 			RepositionItems();
 		}
 
 		/// <summary>
 		/// Remove a server from the list
 		/// </summary>
-		/// <param name="index"></param>
+		/// <param name="index">The index of the server in the list</param>
 		private void RemoveServer(int index)
 		{
 			var o = serverList[index];
 			RemoveServer(o);
 		}
 
+		/// <summary>
+		/// Remove a server from the server list based on the list data
+		/// </summary>
+		/// <param name="item">The <see cref="ServerListItemData"/> to be removed</param>
 		private void RemoveServer(ServerListItemData item)
 		{
 			Destroy(item.ListItem.gameObject);
@@ -162,27 +214,28 @@ namespace ForgeSteamworksNETExample
 		/// <param name="index"></param>
 		private void SetSelectedServer(int index)
 		{
+			// If we selected the server that was already selected then nothing else to do.
 			if (selectedServer == index)
 				return;
 
 			selectedServer = index;
 
+			// Set the border for the selected list item
 			for (int i = 0; i < serverList.Count; i++) {
 				SetListItemSelected(serverList[i], index == i);
 			}
 
 			if (index >= 0) {
-				// TODO: Enable connect button
+				// We have selected a server from the server list so enable the connect button
 				connectButton.interactable = true;
-				// TODO: set selected lobby id
+				// Rename the connect button to state the name of the server/lobby to be joined
 				connectButtonLabel.text = $"(c) Connect to {serverList[index].ListItem.serverName.text}";
+				// Tell the multiplayer menu the steam id of the lobby that was selected
 				mpMenu.SetSelectedLobby(serverList[selectedServer].SteamId);
 			}
 			else
 			{
-				// TODO: Disable connect button
 				connectButton.interactable = false;
-				// TODO: reset selected lobby id
 				connectButtonLabel.text = "(c) Connect";
 				mpMenu.SetSelectedLobby(CSteamID.Nil);
 			}
@@ -199,36 +252,23 @@ namespace ForgeSteamworksNETExample
 		}
 
 		/// <summary>
-		/// Update a specific server's details on the server list.
+		/// Get all available lobbies for this game.
 		/// </summary>
-		/// <param name="option">The server display information to update</param>
-		private void UpdateItem(ServerListItemData option)
-		{
-//			option.ListItem.hostName.text = option.Hostname;
-//
-//			if (option.SqpQuery.ValidResult)
-//			{
-//				var sid = option.SqpQuery.ServerInfo.ServerInfoData;
-//				option.ListItem.serverName.text = $"{sid.ServerName} ({option.LocalOrGlobal})";
-//				option.ListItem.playerCount.text = $"{sid.CurrentPlayers.ToString()}/{sid.MaxPlayers.ToString()}";
-//				option.ListItem.pingTime.text = $"{option.SqpQuery.RTT.ToString()} ms";
-//			}
-//			else
-//			{
-//				option.ListItem.serverName.text = "Server offline";
-//				option.ListItem.playerCount.text = "-/-";
-//				option.ListItem.pingTime.text = "--";
-//			}
-		}
-
 		private void GetAvailableLobbyList()
 		{
 			if (SteamManager.Initialized)
 			{
 				if (!onlyShowFriendsGames)
 				{
+					// Get servers from everywhere change it to ELobbyDistanceFilter.Default to get only near servers
+					SteamMatchmaking.AddRequestLobbyListDistanceFilter(ELobbyDistanceFilter.k_ELobbyDistanceFilterWorldwide);
+					// Only get games that have our id
 					SteamMatchmaking.AddRequestLobbyListStringFilter("fnr_gameId", mpMenu.gameId,
 						ELobbyComparison.k_ELobbyComparisonEqual);
+					// Uncomment this if the default count of 50 is not enough.
+					//SteamMatchmaking.AddRequestLobbyListResultCountFilter(100);
+
+					// Request list of lobbies based on above filters from Steam
 					SteamMatchmaking.RequestLobbyList();
 				}
 				else
@@ -236,18 +276,26 @@ namespace ForgeSteamworksNETExample
 			}
 		}
 
+		/// <summary>
+		/// Check if any of the current user's friends play this game and add the lobby to the server list if they do.
+		/// </summary>
 		private void GetFriendGamesList()
 		{
+			// Get the number of regular friends of the current local user
 			var friendCount = SteamFriends.GetFriendCount(EFriendFlags.k_EFriendFlagImmediate);
 			if (friendCount == -1)
 				return;
 
 			for (int i = 0; i < friendCount; ++i)
 			{
+				// Get the Steam ID of the friend
 				var friendSteamId = SteamFriends.GetFriendByIndex(i, EFriendFlags.k_EFriendFlagImmediate);
+
+				// Get what game the friend is playing
 				FriendGameInfo_t gameInfo;
 				if (SteamFriends.GetFriendGamePlayed(friendSteamId, out gameInfo))
 				{
+					// If they are playing this game as well then get their lobby id
 					if (gameInfo.m_gameID.AppID() == SteamUtils.GetAppID())
 					{
 						AddServer(gameInfo.m_steamIDLobby);
@@ -292,9 +340,24 @@ namespace ForgeSteamworksNETExample
 		}
 	}
 
+	/// <summary>
+	/// Internal class storing server data to be displayed in the server list
+	/// </summary>
 	internal class ServerListItemData
 	{
+		/// <summary>
+		/// The <see cref="CSteamID"/> of the lobby/server
+		/// </summary>
 		public CSteamID SteamId;
+
+		/// <summary>
+		/// Reference to the UI element of this server
+		/// </summary>
 		public ServerListEntry ListItem;
+
+		/// <summary>
+		/// Time of next server information upate
+		/// </summary>
+		public float NextUpdate;
 	}
 }
