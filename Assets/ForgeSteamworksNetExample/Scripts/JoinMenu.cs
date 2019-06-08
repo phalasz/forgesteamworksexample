@@ -108,8 +108,6 @@ namespace ForgeSteamworksNETExample
 				if (Time.time > server.NextUpdate)
 				{
 					// Time to re-request the server information
-					// TODO: Should we check the return value and remove the server from the list
-					//       if it returns false for a lobby that does no longer exist?
 					SteamMatchmaking.RequestLobbyData(server.SteamId);
 
 					// TODO: Might worth extracting the 5.0f into a const or a field to be configured via the inspector
@@ -341,6 +339,12 @@ namespace ForgeSteamworksNETExample
 			{
 				if (serverList[i].SteamId.m_SteamID == result.m_ulSteamIDLobby)
 				{
+					// Lobby no longer exists so remove it from the list
+					if (result.m_bSuccess == 0)
+					{
+						RemoveServer(i);
+					}
+
 					serverList[i].ListItem.serverName.text = SteamMatchmaking.GetLobbyData(serverList[i].SteamId, "name");
 					serverList[i].ListItem.gameType.text = SteamMatchmaking.GetLobbyData(serverList[i].SteamId, "fnr_gameType");
 					serverList[i].ListItem.gameMode.text = SteamMatchmaking.GetLobbyData(serverList[i].SteamId, "fnr_gameMode");
