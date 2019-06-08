@@ -1,5 +1,6 @@
 using System;
 using Steamworks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,7 +15,15 @@ namespace ForgeSteamworksNETExample
 
 	public class SteamAvatar : MonoBehaviour
 	{
+		/// <summary>
+		/// The Steam avatar image if any
+		/// </summary>
 		public RawImage avatarImage;
+
+		/// <summary>
+		/// The local user's steam name
+		/// </summary>
+		public TMP_Text personaName;
 
 		[SerializeField]
 		private Texture2D fallbackImage;
@@ -32,9 +41,18 @@ namespace ForgeSteamworksNETExample
 			if (SteamManager.Initialized)
 			{
 				avatarImage.texture = GetAvatar(steamId);
+				personaName.text = SteamFriends.GetPersonaName();
 			}
 		}
 
+		/// <summary>
+		/// Tries to get the steam avatar of the specified user.
+		///
+		/// Only returns the image for users that the local user knows.
+		/// </summary>
+		/// <param name="steamId">The <see cref="CSteamID"/> of the steam user to get the image for</param>
+		/// <param name="size">The <see cref="AvatarSize"/> to get</param>
+		/// <returns></returns>
 		public Texture2D GetAvatar(CSteamID steamId, AvatarSize size = AvatarSize.Medium)
 		{
 			SteamworksImage image;
@@ -44,6 +62,7 @@ namespace ForgeSteamworksNETExample
 			}
 			catch(SystemException e)
 			{
+				// If there was an error getting the image from steam then return the fallback image.
 				return fallbackImage;
 			}
 
