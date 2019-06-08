@@ -43,6 +43,8 @@ namespace ForgeSteamworksNETExample
 
 		private bool isPrivateLobby;
 
+		private CSteamID selectedLobby;
+
 		private List<Button> _uiButtons = new List<Button>();
 		private bool _matchmaking = false;
 
@@ -70,6 +72,15 @@ namespace ForgeSteamworksNETExample
 				Rpc.MainThreadRunner = MainThreadManager.Instance;
 		}
 
+		/// <summary>
+		/// Sets the lobby to be joined when clicking the connect button.
+		/// </summary>
+		/// <param name="steamId"></param>
+		public void SetSelectedLobby(CSteamID steamId)
+		{
+			this.selectedLobby = steamId;
+		}
+
 		public void Connect()
 		{
 			if (connectUsingMatchmaking)
@@ -79,19 +90,15 @@ namespace ForgeSteamworksNETExample
 				return;
 			}
 
-
+			if (selectedLobby == CSteamID.Nil)
+				return;
 
 			NetWorker client;
 
+			client = new SteamP2PClient();
+			((SteamP2PClient)client).Connect(selectedLobby);
 
-//				client = new UDPClient();
-//				if (natServerHost.Trim().Length == 0)
-//					((UDPClient) client).Connect(ipAddress.text, (ushort) port);
-//				else
-//					((UDPClient) client).Connect(ipAddress.text, (ushort) port, natServerHost, natServerPort);
-
-
-//			Connected(client);
+			Connected(client);
 		}
 
 		public void Host()
@@ -191,9 +198,12 @@ namespace ForgeSteamworksNETExample
 			}
 		}
 
+		/// <summary>
+		/// Callback used when a host successfully created a lobby.
+		/// Sets lobby metadata that is used on the server browser.
+		/// </summary>
 		private void OnLobbyReady()
 		{
-			Debug.Log("Set lobby metadata");
 			var personalName = SteamFriends.GetPersonaName();
 
 			var gameName = serverName.text == "" ? $"{personalName}'s game" : serverName.text;
@@ -204,7 +214,6 @@ namespace ForgeSteamworksNETExample
 			SteamMatchmaking.SetLobbyData(lobbyId, "fnr_gameType", type);
 			SteamMatchmaking.SetLobbyData(lobbyId, "fnr_gameMode", mode);
 			SteamMatchmaking.SetLobbyData(lobbyId, "fnr_gameDesc", comment);
-			Debug.Log("Lobby metadata set");
 		}
 	}
 }

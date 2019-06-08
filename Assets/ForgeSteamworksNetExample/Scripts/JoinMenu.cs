@@ -176,7 +176,7 @@ namespace ForgeSteamworksNETExample
 				connectButton.interactable = true;
 				// TODO: set selected lobby id
 				connectButtonLabel.text = $"(c) Connect to {serverList[index].ListItem.serverName.text}";
-
+				mpMenu.SetSelectedLobby(serverList[selectedServer].SteamId);
 			}
 			else
 			{
@@ -184,6 +184,7 @@ namespace ForgeSteamworksNETExample
 				connectButton.interactable = false;
 				// TODO: reset selected lobby id
 				connectButtonLabel.text = "(c) Connect";
+				mpMenu.SetSelectedLobby(CSteamID.Nil);
 			}
 		}
 
