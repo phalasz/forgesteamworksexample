@@ -5,6 +5,7 @@ using BeardedManStudios.Forge.Networking.Lobby;
 using BeardedManStudios.SimpleJSON;
 using System.Collections.Generic;
 using Steamworks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -25,9 +26,17 @@ namespace ForgeSteamworksNETExample
 		public GameObject networkManager = null;
 		public GameObject[] ToggledButtons;
 
+		[Header("Game information for server browser")]
+		public string gameId = "forgeGame";
+		public string type = "Deathmatch";
+		public string mode = "Teams";
+		public string comment = "Demo comment...";
+
 		[SerializeField]
 		private SteamAvatar playerAvatar;
 
+		[SerializeField]
+		private TMP_InputField serverName;
 
 		private NetworkManager mgr = null;
 		private NetWorker server;
@@ -37,14 +46,15 @@ namespace ForgeSteamworksNETExample
 		private List<Button> _uiButtons = new List<Button>();
 		private bool _matchmaking = false;
 
-		private Callback<LobbyCreated_t> callbackLobbyCreated;
-
 		private void Start()
 		{
 #if !STEAMWORKS
 			Debug.LogError("Missing STEAMWORKS define. This menu will not work without it");
 			throw new SystemException("Missing STEAMWORKS define. This menu will not work without it");
 #endif
+
+			SteamAPI.Init();
+
 			GetPlayerSteamInformation();
 
 			isPrivateLobby = privateGameToggle.isOn;
@@ -58,8 +68,6 @@ namespace ForgeSteamworksNETExample
 
 			if (useMainThreadManagerForRPCs)
 				Rpc.MainThreadRunner = MainThreadManager.Instance;
-
-			callbackLobbyCreated = Callback<LobbyCreated_t>.Create(OnLobbyCreated);
 		}
 
 		public void Connect()
@@ -88,8 +96,8 @@ namespace ForgeSteamworksNETExample
 
 		public void Host()
 		{
-			var myLobby = new SteamP2PServer(maximumNumberOfPlayers);
-			myLobby.Host(SteamUser.GetSteamID(), isPrivateLobby ? ELobbyType.k_ELobbyTypeFriendsOnly : ELobbyType.k_ELobbyTypePublic);
+			server = new SteamP2PServer(maximumNumberOfPlayers);
+			((SteamP2PServer)server).Host(SteamUser.GetSteamID(), isPrivateLobby ? ELobbyType.k_ELobbyTypeFriendsOnly : ELobbyType.k_ELobbyTypePublic, OnLobbyReady);
 
 			server.playerTimeout += (player, sender) => { Debug.Log("Player " + player.NetworkId + " timed out"); };
 
@@ -183,17 +191,20 @@ namespace ForgeSteamworksNETExample
 			}
 		}
 
-		/// <summary>
-		/// Callback to handle the Steamworks API response on lobby creation
-		/// </summary>
-		/// <param name="result"></param>
-		private void OnLobbyCreated(LobbyCreated_t result)
+		private void OnLobbyReady()
 		{
-			if (result.m_eResult == EResult.k_EResultOK)
-			{
-				var personalName = SteamFriends.GetPersonaName();
-				SteamMatchmaking.SetLobbyData((CSteamID) result.m_ulSteamIDLobby, "name", $"{personalName}'s game");
-			}
+			Debug.Log("Set lobby metadata");
+			var personalName = SteamFriends.GetPersonaName();
+
+			var gameName = serverName.text == "" ? $"{personalName}'s game" : serverName.text;
+
+			var lobbyId = ((SteamP2PServer) server).LobbyID;
+			SteamMatchmaking.SetLobbyData(lobbyId, "name", gameName);
+			SteamMatchmaking.SetLobbyData(lobbyId, "fnr_gameId", gameId);
+			SteamMatchmaking.SetLobbyData(lobbyId, "fnr_gameType", type);
+			SteamMatchmaking.SetLobbyData(lobbyId, "fnr_gameMode", mode);
+			SteamMatchmaking.SetLobbyData(lobbyId, "fnr_gameDesc", comment);
+			Debug.Log("Lobby metadata set");
 		}
 	}
 }

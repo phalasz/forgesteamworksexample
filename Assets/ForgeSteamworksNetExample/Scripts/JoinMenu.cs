@@ -16,13 +16,15 @@ namespace ForgeSteamworksNETExample
 		public Button connectButton;
 		public Text connectButtonLabel;
 
+		// TODO: could be exposed on UI to only list games played by steam friends
+		private bool onlyShowFriendsGames;
+
 		private int selectedServer = -1;
 		private List<ServerListItemData> serverList = new List<ServerListItemData>();
 		private float serverListEntryTemplateHeight;
 		private float nextListUpdateTime = 0f;
 		private SteamworksMultiplayerMenu mpMenu;
 
-		private List<CSteamID> LobbyIds = new List<CSteamID>();
 		private Callback<LobbyMatchList_t> callbackLobbyListRequest;
 		private Callback<LobbyDataUpdate_t> callbackLobbyDataUpdate;
 
@@ -83,6 +85,17 @@ namespace ForgeSteamworksNETExample
 				{
 					// Already have that server listed nothing else to do
 					return;
+				}
+			}
+
+			var dataCount = SteamMatchmaking.GetLobbyDataCount(steamId);
+			for (int i = 0; i < dataCount; i++)
+			{
+				string key;
+				string value;
+				if (SteamMatchmaking.GetLobbyDataByIndex(steamId, i, out key, 255, out value, 8192))
+				{
+					Debug.Log($"{steamId}: {key}={value}");
 				}
 			}
 
@@ -211,7 +224,34 @@ namespace ForgeSteamworksNETExample
 		{
 			if (SteamManager.Initialized)
 			{
-				SteamMatchmaking.RequestLobbyList();
+				if (!onlyShowFriendsGames)
+				{
+					SteamMatchmaking.AddRequestLobbyListStringFilter("fnr_gameId", mpMenu.gameId,
+						ELobbyComparison.k_ELobbyComparisonEqual);
+					SteamMatchmaking.RequestLobbyList();
+				}
+				else
+					GetFriendGamesList();
+			}
+		}
+
+		private void GetFriendGamesList()
+		{
+			var friendCount = SteamFriends.GetFriendCount(EFriendFlags.k_EFriendFlagImmediate);
+			if (friendCount == -1)
+				return;
+
+			for (int i = 0; i < friendCount; ++i)
+			{
+				var friendSteamId = SteamFriends.GetFriendByIndex(i, EFriendFlags.k_EFriendFlagImmediate);
+				FriendGameInfo_t gameInfo;
+				if (SteamFriends.GetFriendGamePlayed(friendSteamId, out gameInfo))
+				{
+					if (gameInfo.m_gameID.AppID() == SteamUtils.GetAppID())
+					{
+						AddServer(gameInfo.m_steamIDLobby);
+					}
+				}
 			}
 		}
 
@@ -229,6 +269,10 @@ namespace ForgeSteamworksNETExample
 			}
 		}
 
+		/// <summary>
+		/// Handle the RequestLobbyData Steam API callback
+		/// </summary>
+		/// <param name="result">The <see cref="LobbyDataUpdate_t"/> result set</param>
 		private void OnLobbyDataUpdated(LobbyDataUpdate_t result)
 		{
 			for (int i = 0; i < serverList.Count; i++)
@@ -236,6 +280,11 @@ namespace ForgeSteamworksNETExample
 				if (serverList[i].SteamId.m_SteamID == result.m_ulSteamIDLobby)
 				{
 					serverList[i].ListItem.serverName.text = SteamMatchmaking.GetLobbyData(serverList[i].SteamId, "name");
+					serverList[i].ListItem.gameType.text = SteamMatchmaking.GetLobbyData(serverList[i].SteamId, "fnr_gameType");
+					serverList[i].ListItem.serverName.text = SteamMatchmaking.GetLobbyData(serverList[i].SteamId, "fnr_gameMode");
+					var maxPlayers = SteamMatchmaking.GetLobbyMemberLimit(serverList[i].SteamId);
+					var currPlayers = SteamMatchmaking.GetNumLobbyMembers(serverList[i].SteamId);
+					serverList[i].ListItem.playerCount.text = $"{currPlayers}/{maxPlayers}";
 					return;
 				}
 			}

@@ -9,5 +9,7 @@ namespace ForgeSteamworksNETExample
 		public TMP_Text access;
 		public TMP_Text playerCount;
 		public TMP_Text pingTime;
+		public TMP_Text gameType;
+		public TMP_Text gameMode;
 	}
 }
