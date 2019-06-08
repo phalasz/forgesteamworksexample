@@ -366,6 +366,16 @@ Prefab:
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1899562527}
+    - target: {fileID: 114730545200756042, guid: 772d6ebf3d9b1b246bfbd0a84b891f59,
+        type: 2}
+      propertyPath: m_havePropertiesChanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114730545200756042, guid: 772d6ebf3d9b1b246bfbd0a84b891f59,
+        type: 2}
+      propertyPath: m_isInputParsingRequired
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 114346243836511364, guid: 772d6ebf3d9b1b246bfbd0a84b891f59,
         type: 2}
       propertyPath: m_havePropertiesChanged
@@ -415,20 +425,6 @@ Prefab:
         type: 2}
       propertyPath: m_isInputParsingRequired
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114730545200756042, guid: 772d6ebf3d9b1b246bfbd0a84b891f59,
-        type: 2}
-      propertyPath: m_havePropertiesChanged
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114730545200756042, guid: 772d6ebf3d9b1b246bfbd0a84b891f59,
-        type: 2}
-      propertyPath: m_isInputParsingRequired
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1279879540891832, guid: 772d6ebf3d9b1b246bfbd0a84b891f59, type: 2}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 772d6ebf3d9b1b246bfbd0a84b891f59, type: 2}
@@ -2398,7 +2394,6 @@ MonoBehaviour:
   serverListContentRect: {fileID: 774900600}
   connectButton: {fileID: 2104711873}
   connectButtonLabel: {fileID: 711799785}
-  onlyShowFriendsGames: 0
 --- !u!114 &1899562528
 MonoBehaviour:
   m_ObjectHideFlags: 0

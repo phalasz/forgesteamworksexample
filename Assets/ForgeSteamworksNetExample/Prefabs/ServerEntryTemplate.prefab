@@ -46,7 +46,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1386632387611752
 GameObject:
   m_ObjectHideFlags: 0
@@ -882,6 +882,8 @@ MonoBehaviour:
   access: {fileID: 114712496120012916}
   playerCount: {fileID: 114346243836511364}
   pingTime: {fileID: 114880491403014776}
+  gameType: {fileID: 114969648180545360}
+  gameMode: {fileID: 114730545200756042}
 --- !u!222 &222009108984324246
 CanvasRenderer:
   m_ObjectHideFlags: 1
