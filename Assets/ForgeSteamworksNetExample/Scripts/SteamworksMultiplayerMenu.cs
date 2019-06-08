@@ -98,7 +98,12 @@ namespace ForgeSteamworksNETExample
 			client = new SteamP2PClient();
 			((SteamP2PClient)client).Connect(selectedLobby);
 
-			Connected(client);
+			client.bindSuccessful += (networker) => {
+				MainThreadManager.Run(() =>
+				{
+					Connected(client);
+				});
+			};
 		}
 
 		public void Host()
