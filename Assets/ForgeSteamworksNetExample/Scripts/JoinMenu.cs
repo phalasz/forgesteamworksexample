@@ -282,7 +282,7 @@ namespace ForgeSteamworksNETExample
 				{
 					serverList[i].ListItem.serverName.text = SteamMatchmaking.GetLobbyData(serverList[i].SteamId, "name");
 					serverList[i].ListItem.gameType.text = SteamMatchmaking.GetLobbyData(serverList[i].SteamId, "fnr_gameType");
-					serverList[i].ListItem.serverName.text = SteamMatchmaking.GetLobbyData(serverList[i].SteamId, "fnr_gameMode");
+					serverList[i].ListItem.gameMode.text = SteamMatchmaking.GetLobbyData(serverList[i].SteamId, "fnr_gameMode");
 					var maxPlayers = SteamMatchmaking.GetLobbyMemberLimit(serverList[i].SteamId);
 					var currPlayers = SteamMatchmaking.GetNumLobbyMembers(serverList[i].SteamId);
 					serverList[i].ListItem.playerCount.text = $"{currPlayers}/{maxPlayers}";
