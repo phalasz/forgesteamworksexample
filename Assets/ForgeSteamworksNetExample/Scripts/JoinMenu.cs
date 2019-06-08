@@ -92,8 +92,15 @@ namespace ForgeSteamworksNETExample
 			if (Time.time > nextListUpdateTime)
 			{
 				// Refresh lobbies from steam
+				GetAvailableLobbyList();
 
-				nextListUpdateTime = Time.time + 5.0f + UnityEngine.Random.Range(0.0f, 1.0f);
+				// TODO:
+				// Is re-requesting with the same filters enough and simply not add the server if it is already in the list?
+				// What should happen to servers that are not returned in the new request? Should they be removed?
+
+				// TODO: Might worth extracting the 20.0f into a const or a field to be configured via the inspector
+				//       Is refreshing the list every 20ish seconds good enough?
+				nextListUpdateTime = Time.time + 20.0f + UnityEngine.Random.Range(0.0f, 1.0f);
 			}
 
 			foreach (var server in serverList)
@@ -101,8 +108,14 @@ namespace ForgeSteamworksNETExample
 				if (Time.time > server.NextUpdate)
 				{
 					// Time to re-request the server information
+					// TODO: Should we check the return value and remove the server from the list
+					//       if it returns false for a lobby that does no longer exist?
 					SteamMatchmaking.RequestLobbyData(server.SteamId);
-					server.NextUpdate = Time.time + 5.0f + UnityEngine.Random.Range(0.0f, 1.0f); // TODO: Might worth extracting the 5.0f into a const or a field to be configured via the inspector
+
+					// TODO: Might worth extracting the 5.0f into a const or a field to be configured via the inspector
+					//       Is re-requesting the server/lobby info every 5 seconds good enough? Should it be less frequent?
+					//
+					server.NextUpdate = Time.time + 5.0f + UnityEngine.Random.Range(0.0f, 1.0f);
 				}
 			}
 		}
