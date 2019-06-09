@@ -129,18 +129,6 @@ namespace ForgeSteamworksNETExample
 			Connected(server);
 		}
 
-		private void Update()
-		{
-			if (Input.GetKeyDown(KeyCode.H))
-				Host();
-			else if (Input.GetKeyDown(KeyCode.C))
-				Connect();
-			else if (Input.GetKeyDown(KeyCode.L))
-			{
-				// Refresh lobby list
-			}
-		}
-
 		/// <summary>
 		/// Setup to run after the <see cref="NetWorker"/> has connected
 		/// </summary>

@@ -836,7 +836,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: (c) Connect
+  m_Text: Connect
 --- !u!222 &711799786
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1970,7 +1970,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: (h) Host
+  m_Text: Host
 --- !u!222 &1853289101
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -240,14 +240,14 @@ namespace ForgeSteamworksNETExample
 				// We have selected a server from the server list so enable the connect button
 				connectButton.interactable = true;
 				// Rename the connect button to state the name of the server/lobby to be joined
-				connectButtonLabel.text = $"(c) Connect to {serverList[index].ListItem.serverName.text}";
+				connectButtonLabel.text = $"Connect to {serverList[index].ListItem.serverName.text}";
 				// Tell the multiplayer menu the steam id of the lobby that was selected
 				mpMenu.SetSelectedLobby(serverList[selectedServer].SteamId);
 			}
 			else
 			{
 				connectButton.interactable = false;
-				connectButtonLabel.text = "(c) Connect";
+				connectButtonLabel.text = "Connect";
 				mpMenu.SetSelectedLobby(CSteamID.Nil);
 			}
 		}
