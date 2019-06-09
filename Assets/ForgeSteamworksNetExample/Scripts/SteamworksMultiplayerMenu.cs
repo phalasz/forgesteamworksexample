@@ -15,7 +15,6 @@ namespace ForgeSteamworksNETExample
 {
 	public class SteamworksMultiplayerMenu : MonoBehaviour
 	{
-		public Toggle privateGameToggle;
 		public bool DontChangeSceneOnConnect = false;
 		public bool connectUsingMatchmaking = false;
 		public bool useMainThreadManagerForRPCs = true;
@@ -39,7 +38,7 @@ namespace ForgeSteamworksNETExample
 		private NetworkManager mgr = null;
 		private NetWorker server;
 
-		private bool isPrivateLobby;
+
 
 		private CSteamID selectedLobby;
 
@@ -56,8 +55,6 @@ namespace ForgeSteamworksNETExample
 			SteamAPI.Init();
 
 			GetPlayerSteamInformation();
-
-			isPrivateLobby = privateGameToggle.isOn;
 
 			for (int i = 0; i < ToggledButtons.Length; ++i)
 			{
@@ -122,7 +119,10 @@ namespace ForgeSteamworksNETExample
 			// Until a fix is in place please change line 186 of the SteamP2PServer to read
 			//    `m_CreateLobbyResult = SteamMatchmaking.CreateLobby(lobbyType, MaxConnections);`
 			server = new SteamP2PServer(maximumNumberOfPlayers);
-			((SteamP2PServer)server).Host(SteamUser.GetSteamID(), isPrivateLobby ? ELobbyType.k_ELobbyTypeFriendsOnly : ELobbyType.k_ELobbyTypePublic, OnLobbyReady);
+
+			// Don't yet have a way to invite players to lobby. Until then all hosts are set to be public
+			//((SteamP2PServer)server).Host(SteamUser.GetSteamID(), isPrivateLobby ? ELobbyType.k_ELobbyTypeFriendsOnly : ELobbyType.k_ELobbyTypePublic, OnLobbyReady);
+			((SteamP2PServer)server).Host(SteamUser.GetSteamID(), ELobbyType.k_ELobbyTypePublic, OnLobbyReady);
 
 			server.playerTimeout += (player, sender) => { Debug.Log("Player " + player.NetworkId + " timed out"); };
 
