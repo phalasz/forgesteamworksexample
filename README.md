@@ -8,3 +8,8 @@ Example project demonstrating how to use the Steamworks.Net integration in Forge
 * Make sure an instance of steam is running in the background.
 * Test your application with a built executable exclusively. If you don't, the Steam API will flag the unity editor as the game process, and it will always be listed as "Running" in your steam library, until you restart Unity. If you don't do this, your steam profile will never exit lobbies, and you'll end up with a bunch of "ghost lobbies"
 
+## Notes
+* There have been a few bug fixes that are not yet on the master/asset store verison of FNR so please use a recent dev nightly or the develop branch code directly.
+* Currently there is a bug in the SteamP2PServer code where the lobby max member count is hard coded to be `5`.
+[Until a fix is in place](https://github.com/BeardedManStudios/ForgeNetworkingRemastered/pull/284) please change line 186 of the SteamP2PServer to read
+  `m_CreateLobbyResult = SteamMatchmaking.CreateLobby(lobbyType, MaxConnections);` 
