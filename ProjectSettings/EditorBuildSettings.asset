@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/MultiplayerMenuSteamworks.Net.unity
+    path: Assets/ForgeSteamworksNetExample/Scenes/MultiplayerMenuSteamworks.Net.unity
     guid: d6c66a5be127b7d4086631bb2d44667f
   - enabled: 1
     path: Assets/Bearded Man Studios Inc/Examples/Cube Forge/CubeForgeGame.unity
