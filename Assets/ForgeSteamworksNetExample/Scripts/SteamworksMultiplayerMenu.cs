@@ -38,8 +38,6 @@ namespace ForgeSteamworksNETExample
 		private NetworkManager mgr = null;
 		private NetWorker server;
 
-
-
 		private CSteamID selectedLobby;
 
 		private List<Button> _uiButtons = new List<Button>();
