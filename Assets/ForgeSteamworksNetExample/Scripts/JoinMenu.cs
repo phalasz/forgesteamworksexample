@@ -63,6 +63,8 @@ namespace ForgeSteamworksNETExample
 		/// </summary>
 		private SteamworksMultiplayerMenu mpMenu;
 
+		private bool isConnecting;
+
 		// Steamworks API callback methods
 		private Callback<LobbyMatchList_t> callbackLobbyListRequest;
 		private Callback<LobbyDataUpdate_t> callbackLobbyDataUpdate;
@@ -124,6 +126,10 @@ namespace ForgeSteamworksNETExample
 		/// <param name="e"></param>
 		public void OnServerItemPointerClick(BaseEventData e)
 		{
+			// Ignore clicks if Forge is in the process of connecting.
+			if (mpMenu.IsConnecting)
+				return;
+
 			var eventData = (PointerEventData)e;
 			for (int i = 0; i < serverList.Count; ++i) {
 				if (serverList[i].ListItem.gameObject != eventData.pointerPress) continue;

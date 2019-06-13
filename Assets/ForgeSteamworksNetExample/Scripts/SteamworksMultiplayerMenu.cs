@@ -15,6 +15,11 @@ namespace ForgeSteamworksNETExample
 {
 	public class SteamworksMultiplayerMenu : MonoBehaviour
 	{
+		/// <summary>
+		/// Flag to indicate that Forge is in the process of connecting to a server/lobby
+		/// </summary>
+		public bool IsConnecting { get; private set; }
+
 		public bool DontChangeSceneOnConnect = false;
 		public bool connectUsingMatchmaking = false;
 		public bool useMainThreadManagerForRPCs = true;
@@ -38,6 +43,10 @@ namespace ForgeSteamworksNETExample
 		private NetworkManager mgr = null;
 		private NetWorker server;
 
+		/// <summary>
+		/// The Steam ID of the selected lobby to join.
+		/// </summary>
+		/// <remarks>This value is set by the join menu when a server in the server list is clicked</remarks>
 		private CSteamID selectedLobby;
 
 		private List<Button> _uiButtons = new List<Button>();
@@ -80,6 +89,9 @@ namespace ForgeSteamworksNETExample
 		/// </summary>
 		public void Connect()
 		{
+			SetToggledButtons(false);
+			IsConnecting = true;
+
 			if (connectUsingMatchmaking)
 			{
 				// Add custom matchmaking logic here.
@@ -102,6 +114,15 @@ namespace ForgeSteamworksNETExample
 				MainThreadManager.Run(() =>
 				{
 					Connected(client);
+				});
+			};
+
+			client.bindFailure += sender =>
+			{
+				MainThreadManager.Run(() =>
+				{
+					SetToggledButtons(true);
+					IsConnecting = false;
 				});
 			};
 

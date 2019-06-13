@@ -2349,7 +2349,9 @@ MonoBehaviour:
   connectUsingMatchmaking: 0
   useMainThreadManagerForRPCs: 1
   networkManager: {fileID: 186558, guid: 79adc0da5b6caf74990d862696696ecd, type: 2}
-  ToggledButtons: []
+  ToggledButtons:
+  - {fileID: 2104711872}
+  - {fileID: 1920631495}
   maximumNumberOfPlayers: 5
   gameId: forgeGame
   type: Deathmatch
