@@ -349,6 +349,7 @@ namespace ForgeSteamworksNETExample
 					if (result.m_bSuccess == 0)
 					{
 						RemoveServer(i);
+						return;
 					}
 
 					serverList[i].ListItem.serverName.text = SteamMatchmaking.GetLobbyData(serverList[i].SteamId, "name");
