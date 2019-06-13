@@ -2,6 +2,8 @@
 
 Example project demonstrating how to use the Steamworks.Net integration in Forge to host and join games.
 
+* Make sure you have [large file support](https://git-lfs.github.com/) installed for git
+* Clone the repository. If you download as a zip then all images will be broken.
 * Open the repo in Unity
 * Make sure that you have `STEAMWORKS` set in the [Scripting Define Symbols list in your Player settings](https://docs.unity3d.com/Manual/PlatformDependentCompilation.html)
 * Install Steamworks.Net for Unity (https://steamworks.github.io/installation/#unity-instructions)
