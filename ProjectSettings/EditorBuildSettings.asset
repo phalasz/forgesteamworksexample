@@ -9,6 +9,6 @@ EditorBuildSettings:
     path: Assets/ForgeSteamworksNetExample/Scenes/MultiplayerMenuSteamworks.Net.unity
     guid: d6c66a5be127b7d4086631bb2d44667f
   - enabled: 1
-    path: Assets/Bearded Man Studios Inc/Examples/Cube Forge/CubeForgeGame.unity
-    guid: 4ef136a7071399248bad683d402a0e39
+    path: Assets/ForgeSteamworksNetExample/Scenes/Game.unity
+    guid: 49bd747b80a72954fbd286a81b9d3f26
   m_configObjects: {}
