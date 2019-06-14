@@ -371,6 +371,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85ac4b0f2e95415c847747e1c28fc2e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mpMenu: {fileID: 2008293287}
 --- !u!4 &346474443
 Transform:
   m_ObjectHideFlags: 0

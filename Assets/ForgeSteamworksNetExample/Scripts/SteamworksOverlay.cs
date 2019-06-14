@@ -9,8 +9,8 @@ namespace ForgeSteamworksNETExample
 		/// <summary>
 		/// Reference to the multiplayer menu
 		/// </summary>
+		[SerializeField]
 		private SteamworksMultiplayerMenu mpMenu;
-
 
 		private Callback<GameLobbyJoinRequested_t> callbackLobbyJoinRequest;
 
