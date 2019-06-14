@@ -39,11 +39,14 @@ namespace ForgeSteamworksNETExample.Player
 		[SerializeField]
 		private Rigidbody baseBody;
 
+		private Animator baseAnimator;
+
 		private CSteamID steamId;
 
 		private void Awake()
 		{
 			baseBody = GetComponent<Rigidbody>();
+			baseAnimator = GetComponent<Animator>();
 			inputManager = GetComponent<InputManager>();
 		}
 
@@ -53,11 +56,13 @@ namespace ForgeSteamworksNETExample.Player
 			{
 				networkObject.position = baseBody.position;
 				networkObject.rotation = baseBody.rotation;
+				networkObject.moveAmount = inputManager.MoveAmount;
 			}
 			else
 			{
 				baseBody.position = networkObject.position;
 				baseBody.rotation = networkObject.rotation;
+				baseAnimator.SetFloat("vertical", networkObject.moveAmount);
 			}
 		}
 
