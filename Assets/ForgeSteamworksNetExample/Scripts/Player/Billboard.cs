@@ -6,11 +6,11 @@ namespace ForgeSteamworksNETExample.Player
 	{
 		public bool alignNotLook = true;
 
-		private Transform playerCam;
+		public Transform playerCam;
 
 		private void Start()
 		{
-			playerCam = FindObjectOfType<Camera>().transform;
+			playerCam = GameManager.localPlayer.GetComponentInChildren<Camera>().transform;
 		}
 
 		private void LateUpdate()

@@ -6,9 +6,14 @@ namespace ForgeSteamworksNETExample.Player
 {
 	public class GameManager : MonoBehaviour
 	{
+		/// <summary>
+		/// Reference to the local client's player character
+		/// </summary>
+		public static NetworkedPlayer localPlayer;
+
 		private void Start()
 		{
-			NetworkManager.Instance.InstantiatePlayer();
+			localPlayer = NetworkManager.Instance.InstantiatePlayer() as NetworkedPlayer;
 		}
 
 		private void Update()
