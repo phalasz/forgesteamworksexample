@@ -63,8 +63,6 @@ namespace ForgeSteamworksNETExample
 		/// </summary>
 		private SteamworksMultiplayerMenu mpMenu;
 
-		private bool isConnecting;
-
 		// Steamworks API callback methods
 		private Callback<LobbyMatchList_t> callbackLobbyListRequest;
 		private Callback<LobbyDataUpdate_t> callbackLobbyDataUpdate;

@@ -1,3 +1,4 @@
+using BeardedManStudios.Forge.Networking.Unity;
 using Steamworks;
 using UnityEngine;
 
@@ -5,20 +6,25 @@ namespace ForgeSteamworksNETExample
 {
 	public class SteamworksOverlay :MonoBehaviour
 	{
+		/// <summary>
+		/// Reference to the multiplayer menu
+		/// </summary>
+		private SteamworksMultiplayerMenu mpMenu;
+
+
+		private Callback<GameLobbyJoinRequested_t> callbackLobbyJoinRequest;
+
 		private void Awake()
 		{
 			DontDestroyOnLoad(this);
+
+			callbackLobbyJoinRequest = Callback<GameLobbyJoinRequested_t>.Create(OnLobbyJoinRequested);
 		}
 
-		private void Update()
+		private void OnLobbyJoinRequested(GameLobbyJoinRequested_t result)
 		{
-			if (Input.GetKey(KeyCode.Tab) && Input.GetKey(KeyCode.LeftShift))
-			{
-				if (SteamManager.Initialized)
-				{
-					SteamFriends.ActivateGameOverlay("friends");
-				}
-			}
+			mpMenu.SetSelectedLobby(result.m_steamIDLobby);
+			mpMenu.Connect();
 		}
 	}
 }
