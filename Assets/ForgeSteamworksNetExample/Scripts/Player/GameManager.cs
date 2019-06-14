@@ -1,5 +1,6 @@
 using BeardedManStudios.Forge.Networking.Unity;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace ForgeSteamworksNETExample.Player
 {
@@ -8,6 +9,16 @@ namespace ForgeSteamworksNETExample.Player
 		private void Start()
 		{
 			NetworkManager.Instance.InstantiatePlayer();
+		}
+
+		private void Update()
+		{
+			if (Input.GetKey(KeyCode.Escape))
+			{
+				NetworkManager.Instance.Disconnect();
+
+				SceneManager.LoadScene(0);
+			}
 		}
 	}
 }

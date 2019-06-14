@@ -46,7 +46,7 @@ namespace ForgeSteamworksNETExample.Player
 			var steamId = args.GetNext<ulong>();
 			player.SetSteamId(steamId);
 
-			avatar.Initialize((CSteamID)steamId, AvatarSize.Small);
+			avatar.Initialize((CSteamID)steamId, AvatarSize.Medium);
 		}
 	}
 }
