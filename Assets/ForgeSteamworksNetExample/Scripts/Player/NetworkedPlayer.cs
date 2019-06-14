@@ -80,7 +80,6 @@ namespace ForgeSteamworksNETExample.Player
 			}
 
 			networkObject.rotation = Quaternion.identity;
-			networkObject.rotationInterpolation.current = Quaternion.identity;
 			networkObject.rotationInterpolation.target = Quaternion.identity;
 			networkObject.SnapInterpolations();
 
