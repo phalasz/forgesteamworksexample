@@ -121,12 +121,17 @@ namespace ForgeSteamworksNETExample
 			{
 				MainThreadManager.Run(() =>
 				{
-					SetToggledButtons(true);
-					IsConnecting = false;
+					ResetButtonsOnFailedConnection();
 				});
 			};
 
-			// TODO: handle lobby join failures. bindFailure?
+			client.disconnected += sender =>
+			{
+				MainThreadManager.Run(() =>
+				{
+					ResetButtonsOnFailedConnection();
+				});
+			};
 		}
 
 		/// <summary>
@@ -177,6 +182,20 @@ namespace ForgeSteamworksNETExample
 					SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
 				else
 					NetworkObject.Flush(networker); //Called because we are already in the correct scene!
+			}
+		}
+
+		/// <summary>
+		/// Called when failed to connect to a lobby.
+		/// </summary>
+		private void ResetButtonsOnFailedConnection()
+		{
+			// Only try to re-enable buttons and clicks if we are receiving a disconnect before
+			// switching to the game scene
+			if (IsConnecting)
+			{
+				SetToggledButtons(true);
+				IsConnecting = false;
 			}
 		}
 
