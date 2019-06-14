@@ -96,7 +96,7 @@ namespace ForgeSteamworksNETExample.Player
 
 		private void OnDisconnect(NetWorker sender)
 		{
-			NetworkManager.Instance.Networker.disconnected -= OnDisconnect;
+
 
 			MainThreadManager.Run(() =>
 			{
@@ -111,6 +111,10 @@ namespace ForgeSteamworksNETExample.Player
 				}
 			});
 
+			if (NetworkManager.Instance == null)
+				return;
+
+			NetworkManager.Instance.Networker.disconnected -= OnDisconnect;
 			NetworkManager.Instance.Disconnect();
 		}
 
