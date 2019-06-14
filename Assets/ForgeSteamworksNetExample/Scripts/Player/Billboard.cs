@@ -13,29 +13,12 @@ namespace ForgeSteamworksNETExample.Player
 
 		private Transform playerCam;
 
-		private void Awake()
-		{
-			player.NetworkStartEvent += OnNetworkStarted;
-		}
-
-		private void OnDestroy()
-		{
-			player.NetworkStartEvent -= OnNetworkStarted;
-		}
-
-		private void OnNetworkStarted()
-		{
-			MainThreadManager.Run(() =>
-			{
-				playerCam = GameManager.localPlayer.GetComponentInChildren<Camera>().transform;
-			});
-		}
-
 		private void LateUpdate()
 		{
 			if (playerCam == null)
-				return;
-
+			{
+				playerCam = GameManager.localPlayer.GetComponentInChildren<Camera>().transform;
+			}
 
 			if (alignNotLook)
 				transform.forward = playerCam.forward;

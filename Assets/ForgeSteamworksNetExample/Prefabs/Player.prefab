@@ -3149,7 +3149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 114402572435312292}
-  alignNotLook: 0
+  alignNotLook: 1
 --- !u!114 &114792714681721574
 MonoBehaviour:
   m_ObjectHideFlags: 1
