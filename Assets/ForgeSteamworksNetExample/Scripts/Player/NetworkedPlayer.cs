@@ -27,8 +27,6 @@ namespace ForgeSteamworksNETExample.Player
 		/// </summary>
 		public event System.Action NetworkStartEvent;
 
-		public Camera PlayerCamera { get; private set; }
-
 		/// <summary>
 		/// Scripts that should be enabled for the local client
 		/// </summary>
@@ -50,7 +48,6 @@ namespace ForgeSteamworksNETExample.Player
 			baseBody = GetComponent<Rigidbody>();
 			baseAnimator = GetComponent<Animator>();
 			inputManager = GetComponent<InputManager>();
-			PlayerCamera = GetComponentInChildren<Camera>();
 		}
 
 		private void FixedUpdate()
