@@ -15,6 +15,9 @@ namespace ForgeSteamworksNETExample.Player
 
 		private void LateUpdate()
 		{
+			if (GameManager.localPlayer == null)
+				return;
+
 			if (playerCam == null)
 			{
 				playerCam = GameManager.localPlayer.GetComponentInChildren<Camera>().transform;
