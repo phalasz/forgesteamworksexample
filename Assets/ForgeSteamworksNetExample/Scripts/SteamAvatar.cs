@@ -46,7 +46,10 @@ namespace ForgeSteamworksNETExample
 			if (SteamManager.Initialized)
 			{
 				avatarImage.texture = GetAvatar(steamId, size);
-				personaName.text = SteamFriends.GetPersonaName();
+				if (steamId != SteamUser.GetSteamID())
+					personaName.text = SteamFriends.GetFriendPersonaName(steamId);
+				else
+					personaName.text = SteamFriends.GetPersonaName();
 			}
 		}
 
