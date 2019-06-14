@@ -74,6 +74,11 @@ namespace ForgeSteamworksNETExample.Player
 					NetworkStartEvent();
 			}
 
+			networkObject.rotation = Quaternion.identity;
+			networkObject.rotationInterpolation.current = Quaternion.identity;
+			networkObject.rotationInterpolation.target = Quaternion.identity;
+			networkObject.SnapInterpolations();
+
 			if (NetworkManager.Instance.Networker is IServer)
 			{
 				// You can do server specific initialization here
