@@ -42,12 +42,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ChatManagerNetworkObject:
   - {fileID: 1000012032569418, guid: b454b1be0b2c3fa4fb48430867af7566, type: 2}
-  CubeForgeGameNetworkObject: []
-  ExampleProximityPlayerNetworkObject:
-  - {fileID: 1000012738253334, guid: feb25ecf90a8d8b4ab922a455249997b, type: 2}
-  NetworkCameraNetworkObject:
-  - {fileID: 139536, guid: 661f29f0c0c86fa47b6015bd602d0ac6, type: 2}
-  TestNetworkObject: []
+  PlayerNetworkObject:
+  - {fileID: 1000787960237960, guid: 9c2d0a386923b764c9e0b95e487958ac, type: 2}
   automaticScenes: 1
 --- !u!1001 &100100000
 Prefab:

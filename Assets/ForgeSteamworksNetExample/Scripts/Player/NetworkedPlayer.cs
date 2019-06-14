@@ -1,3 +1,4 @@
+using System;
 using BeardedManStudios.Forge.Logging;
 using BeardedManStudios.Forge.Networking;
 using BeardedManStudios.Forge.Networking.Generated;
@@ -11,6 +12,7 @@ namespace ForgeSteamworksNETExample.Player
 {
 	public class NetworkedPlayer : PlayerBehavior
 	{
+		[Serializable]
 		public class ToggleEvent : UnityEvent<bool>{}
 
 		/// <summary>

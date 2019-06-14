@@ -43,9 +43,10 @@ namespace ForgeSteamworksNETExample.Player
 
 		private void OnSetupPlayerCalled(RpcArgs args)
 		{
+			var steamId = args.GetNext<ulong>();
 			player.SetSteamId(args.GetNext<ulong>());
 
-			//TODO: init name plate
+			avatar.Initialize((CSteamID)steamId, AvatarSize.Small);
 		}
 	}
 }
