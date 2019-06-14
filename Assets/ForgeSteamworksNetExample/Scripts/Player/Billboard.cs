@@ -1,20 +1,42 @@
+using BeardedManStudios.Forge.Networking.Unity;
 using UnityEngine;
 
 namespace ForgeSteamworksNETExample.Player
 {
 	public class Billboard : MonoBehaviour
 	{
-		public bool alignNotLook = true;
+		[SerializeField]
+		private NetworkedPlayer player;
 
-		public Transform playerCam;
+		[SerializeField]
+		private bool alignNotLook = true;
 
-		private void Start()
+		private Transform playerCam;
+
+		private void Awake()
 		{
-			playerCam = GameManager.localPlayer.GetComponentInChildren<Camera>().transform;
+			player.NetworkStartEvent += OnNetworkStarted;
+		}
+
+		private void OnDestroy()
+		{
+			player.NetworkStartEvent -= OnNetworkStarted;
+		}
+
+		private void OnNetworkStarted()
+		{
+			MainThreadManager.Run(() =>
+			{
+				playerCam = GameManager.localPlayer.GetComponentInChildren<Camera>().transform;
+			});
 		}
 
 		private void LateUpdate()
 		{
+			if (playerCam == null)
+				return;
+
+
 			if (alignNotLook)
 				transform.forward = playerCam.forward;
 			else
