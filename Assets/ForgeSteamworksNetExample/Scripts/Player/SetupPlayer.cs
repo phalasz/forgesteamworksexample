@@ -44,7 +44,7 @@ namespace ForgeSteamworksNETExample.Player
 		private void OnSetupPlayerCalled(RpcArgs args)
 		{
 			var steamId = args.GetNext<ulong>();
-			player.SetSteamId(args.GetNext<ulong>());
+			player.SetSteamId(steamId);
 
 			avatar.Initialize((CSteamID)steamId, AvatarSize.Small);
 		}
