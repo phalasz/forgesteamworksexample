@@ -36,11 +36,16 @@ namespace ForgeSteamworksNETExample
 			}
 		}
 
-		public void Initialize(CSteamID steamId)
+		/// <summary>
+		/// Initialize the steam avatar display.
+		/// </summary>
+		/// <param name="steamId">The <see cref="CSteamID"/> of the user who's information to get</param>
+		/// <param name="size">The <see cref="AvatarSize"/> of the image to get</param>
+		public void Initialize(CSteamID steamId, AvatarSize size = AvatarSize.Medium)
 		{
 			if (SteamManager.Initialized)
 			{
-				avatarImage.texture = GetAvatar(steamId);
+				avatarImage.texture = GetAvatar(steamId, size);
 				personaName.text = SteamFriends.GetPersonaName();
 			}
 		}

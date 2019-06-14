@@ -4,13 +4,13 @@ using UnityEngine;
 
 namespace BeardedManStudios.Forge.Networking.Generated
 {
-	[GeneratedRPC("{\"types\":[[\"string\", \"string\"]]")]
-	[GeneratedRPCVariableNames("{\"types\":[[\"username\", \"message\"]]")]
-	public abstract partial class ChatManagerBehavior : NetworkBehavior
+	[GeneratedRPC("{\"types\":[[\"ulong\"]]")]
+	[GeneratedRPCVariableNames("{\"types\":[[\"steamId\"]]")]
+	public abstract partial class PlayerBehavior : NetworkBehavior
 	{
-		public const byte RPC_SEND_MESSAGE = 0 + 5;
+		public const byte RPC_SETUP_PLAYER = 0 + 5;
 
-		public ChatManagerNetworkObject networkObject = null;
+		public PlayerNetworkObject networkObject = null;
 
 		public override void Initialize(NetworkObject obj)
 		{
@@ -18,11 +18,11 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			if (networkObject != null && networkObject.AttachedBehavior != null)
 				return;
 
-			networkObject = (ChatManagerNetworkObject)obj;
+			networkObject = (PlayerNetworkObject)obj;
 			networkObject.AttachedBehavior = this;
 
 			base.SetupHelperRpcs(networkObject);
-			networkObject.RegisterRpc("SendMessage", SendMessage, typeof(string), typeof(string));
+			networkObject.RegisterRpc("SetupPlayer", SetupPlayer, typeof(ulong));
 
 			networkObject.onDestroy += DestroyGameObject;
 
@@ -76,7 +76,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 
 		public override void Initialize(NetWorker networker, byte[] metadata = null)
 		{
-			Initialize(new ChatManagerNetworkObject(networker, createCode: TempAttachCode, metadata: metadata));
+			Initialize(new PlayerNetworkObject(networker, createCode: TempAttachCode, metadata: metadata));
 		}
 
 		private void DestroyGameObject(NetWorker sender)
@@ -87,7 +87,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 
 		public override NetworkObject CreateNetworkObject(NetWorker networker, int createCode, byte[] metadata = null)
 		{
-			return new ChatManagerNetworkObject(networker, this, createCode, metadata);
+			return new PlayerNetworkObject(networker, this, createCode, metadata);
 		}
 
 		protected override void InitializedTransform()
@@ -97,10 +97,9 @@ namespace BeardedManStudios.Forge.Networking.Generated
 
 		/// <summary>
 		/// Arguments:
-		/// string username
-		/// string message
+		/// ulong steamId
 		/// </summary>
-		public abstract void SendMessage(RpcArgs args);
+		public abstract void SetupPlayer(RpcArgs args);
 
 		// DO NOT TOUCH, THIS GETS GENERATED PLEASE EXTEND THIS CLASS IF YOU WISH TO HAVE CUSTOM CODE ADDITIONS
 	}
